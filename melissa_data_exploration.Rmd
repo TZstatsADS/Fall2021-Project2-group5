@@ -1,0 +1,60 @@
+---
+title: "Data Exploration"
+author: "Melissa Bischoff"
+date: "10/11/2021"
+output: html_document
+---
+```{r}
+library(ggplot2)
+cleanCols <- function(x){
+  lower_names = tolower(names(x))
+  sub_periods = gsub("\\.", "_", lower_names)
+  sub_spaces = gsub(" ","_",sub_periods)
+  clean_df_cols = gsub("__","_",sub_spaces)
+  return(clean_df_cols)
+}
+```
+```{r}
+dhs_data_dashboard = read.csv('./data/department_of_homeless_services/DHS_Data_Dashboard.csv')
+dhs_daily_report = read.csv('./data/department_of_homeless_services/DHS_Daily_Report.csv')
+buildings = read.csv('./data/department_of_homeless_services/Buildings_by_Borough_and_Community_District.csv')
+individual_census = read.csv('./data/department_of_homeless_services/Individual_Census_by_Borough__Community_District__and_Facility_Type.csv')
+free_covid_meals = read.csv('./data/department_of_homeless_services/COVID-19_Free_Meals_Locations.csv')
+doh_offices = read.csv('./data/department_of_homeless_services/Directory_Of_Homebase_Locations.csv')
+
+names(dhs_data_dashboard) = cleanCols(dhs_data_dashboard)
+names(dhs_daily_report) = cleanCols(dhs_daily_report)
+names(buildings) = cleanCols(buildings)
+names(individual_census) = cleanCols(individual_census)
+names(free_covid_meals) = cleanCols(free_covid_meals)
+names(doh_offices) = cleanCols(doh_offices)
+```
+
+```{r}
+dhs_data_dashboard$date = as.Date(dhs_data_dashboard$report_date,
+                                         format = "%m/%d/%Y")
+dhs_data_dashboard$newdate = format(dhs_data_dashboard$date, "%Y-%m-%d")
+
+ggplot(dhs_data_dashboard,
+       aes(x = newdate, 
+           y = sa_avg_daily_census_individual_in_shelter__total,
+           group = 1)) +
+  geom_line() +
+  geom_vline(xintercept = dhs_data_dashboard$newdate[57],
+             linetype="dotted", 
+             color = "red",
+             size=.75) +
+  theme(axis.text.x = element_text(angle = 90)) 
+
+```
+
+
+
+
+
+
+
+
+
+
+
