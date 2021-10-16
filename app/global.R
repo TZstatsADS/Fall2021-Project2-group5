@@ -7,6 +7,7 @@ if(!require(dplyr)) install.packages("dplyr", repos = "http://cran.us.r-project.
 if(!require(ggplot2)) install.packages("ggplot2", repos = "http://cran.us.r-project.org")
 if(!require(RColorBrewer)) install.packages("RColorBrewer", repos = "http://cran.us.r-project.org")
 if(!require(leaflet)) install.packages("leaflet", repos = "http://cran.us.r-project.org")
+if(!require(lubridate)) install.packages("lubridate", repos = "http://cran.us.r-project.org")
 if(!require(plotly)) install.packages("plotly", repos = "http://cran.us.r-project.org")
 if(!require(geojsonio)) install.packages("geojsonio", repos = "http://cran.us.r-project.org")
 if(!require(shiny)) install.packages("shiny", repos = "http://cran.us.r-project.org")
