@@ -52,7 +52,7 @@ ui <- fluidPage(
              tabPanel('COVID-19 Tracker', icon = icon("viruses"),
                       div(class='coverDiv',
                           titlePanel("Latest Data on Coronavirus (COVID-19) Cases in New York City"),
-                          span(tags$h5("This page provides up-to-date Covid-19 statistics in NYC including case count, death count and hospitalized count, as well as a time-series trends plot for a synthetic view.")),
+                          span(tags$h5("This page provides up-to-date Covid-19 statistics in NYC including case count, death count, probable count and hospitalized count, as well as a time-series trends plot for a synthetic view.")),
                           
                           fluidRow(
                             # Value Boxes for most recent day
@@ -78,17 +78,24 @@ ui <- fluidPage(
                                    valueBoxOutput(outputId = "TDeathsBox",width = 12)
                             )
                           ),
-                          span(tags$i(h5("Source: ", tags$a(href="https://data.cityofnewyork.us/Health/COVID-19-Daily-Counts-of-Cases-Hospitalizations-an/rc75-m7u3", "Daily count of NYC Coronavirus Cases")," Reported cases are subject to significant variation in reporting organizations.", style="font-weight:italic"))),
+                          span(tags$i(h5("Source: ", tags$a(href="https://data.cityofnewyork.us/Health/COVID-19-Daily-Counts-of-Cases-Hospitalizations-an/rc75-m7u3", "Daily count of NYC Coronavirus Cases. ")," Reported cases are subject to significant variation in reporting organizations.", style="font-weight:italic"))),
                           tags$br(),
                           span(tags$i(h6(paste0("Last Update on: ", nyc_latest$date_of_interest[1])))),
+                          # plot to compare 5 boroughs
+                          span(tags$h2("Covid-19 Overall Situation of the 5 Boroughs in NYC")),
+                          
                           fluidRow(
-                            column(6, align="center",
-                                   highchartOutput("tsnew",width = "100%",height = "560px")
+                            column(4, align="center",
+                                   highchartOutput("tsnewcase",width = "100%",height = "400px")
                             ),
-                            column(6, align="center",
-                                   highchartOutput("tscum",width = "100%",height = "560px")
+                            column(4, align="center",
+                                   highchartOutput("tsnew",width = "100%",height = "400px")
+                            ),
+                            column(4, align="center",
+                                   highchartOutput("tscum",width = "100%",height = "400px")
                             )
                           ),
+                          span(tags$h2("Covid-19 Detailed Situation  of the 5 Boroughs in NYC")),
                           
                           sidebarLayout(position = "left",
                                         sidebarPanel(
@@ -103,7 +110,7 @@ ui <- fluidPage(
                                           checkboxInput("daily", label = "Daily", value = TRUE),
                                           checkboxInput("weekly", label = "Weekly", value = FALSE),tags$br(),
                                           
-                                          h3("Select the topic(s) to see trends over time:", align = "left", style="color:#068bd9"),
+                                          h3("Select the topic(s) to see trends over time", align = "left", style="color:#068bd9"),
                                           checkboxInput("casesummary", label = "Cases", value = TRUE),
                                           checkboxInput("deathsummary", label = "Deaths", value = FALSE),
                                           checkboxInput("hospsummary", label = "Hospitalization", value = FALSE),tags$br(),
@@ -271,7 +278,7 @@ server <- function(input, output, session) {
                     value=c(d[,1],d[,2],d[,3],d[,4],d[,5])) 
       cum<-rbind(c,e) 
       # custom title of plot
-      tscum_title <- "Cumulative confirmed cases and deaths of the 5 boroughs in New York City"
+      tscum_title <- "Cumulative COVID-19 Confirmed Cases and Deaths of the 5 boroughs in New York City"
       
       # ------------------------- plot -------------------------------------------------
       hchart(cum, "column",
@@ -279,11 +286,10 @@ server <- function(input, output, session) {
         hc_chart(zoomType = "x") %>%
         #hc_colors(c("#0015BC", "#FF0000")) %>% need one color for each variable
         hc_legend(align = "center", verticalAlign = "bottom",layout = "horizontal") %>%
-        #hc_xAxis(title = list(text = "Date"),
-         #        labels = list(format = '{value:%b %d %y}')) %>%
-        #hc_yAxis(title = list(text = "Count"),
-         #        tickInterval = 400,
-          #       max = max(cum$value)) %>%
+        hc_xAxis(title = list(text = "Borough")) %>%
+        hc_yAxis(title = list(text = "Count"),
+                 #tickInterval = 400,
+                 max = max(cum$value)) %>%
         hc_title(text = paste0(tscum_title)) %>%
         hc_exporting(enabled = TRUE)
     })
@@ -294,6 +300,28 @@ server <- function(input, output, session) {
       cnewc<-data.frame(type=c('death','death','death','death','death'),
                         borough=c("Bronx","Brooklyn","Manhattan","Queens","Staten Island"),
                         value=c(cnewb[,1],cnewb[,2],cnewb[,3],cnewb[,4],cnewb[,5]))              
+      cnewh<-cnew[,grepl("hos",colnames(cnew))]
+      cnewi<-data.frame(type=c('hospitalized','hospitalized','hospitalized','hospitalized','hospitalized'),
+                        borough=c("Bronx","Brooklyn","Manhattan","Queens","Staten Island"),
+                        value=c(cnewh[,1],cnewh[,2],cnewh[,3],cnewh[,4],cnewh[,5])) 
+      latestcase<-rbind(cnewc,cnewi)
+      # custom title of plot
+      tsnewcase_title <- "New COVID-19 Death and Hospitalized Cases of the 5 Boroughs in New York City"
+      
+      # ------------------------- plot -------------------------------------------------
+      hchart(latestcase, "column",
+             hcaes(x = borough, y = value, group = type)) %>%
+        hc_chart(zoomType = "x") %>%
+        hc_legend(align = "center", verticalAlign = "bottom",layout = "horizontal") %>%
+        hc_xAxis(title = list(text = "Borough")) %>%
+        hc_yAxis(title = list(text = "Count"),
+                 max = max(latestcase$value)) %>%
+        hc_title(text = paste0(tsnewcase_title)) %>%
+        hc_exporting(enabled = TRUE)
+    })
+    output$tsnewcase <- renderHighchart({
+      # subset data and make it tidy
+      cnew<-covid[,c(9:12,16:19,23:26,30:33,37:40)]%>%tail(1)
       cnewd<-cnew[,grepl("case",colnames(cnew))&!grepl("prob",colnames(cnew))]
       cnewe<-data.frame(type=c('confirmed_case','confirmed_case','confirmed_case','confirmed_case','confirmed_case'),
                         borough=c("Bronx","Brooklyn","Manhattan","Queens","Staten Island"),
@@ -302,26 +330,19 @@ server <- function(input, output, session) {
       cnewg<-data.frame(type=c('probable_case','probable_case','probable_case','probable_case','probable_case'),
                         borough=c("Bronx","Brooklyn","Manhattan","Queens","Staten Island"),
                         value=c(cnewf[,1],cnewf[,2],cnewf[,3],cnewf[,4],cnewf[,5])) 
-      cnewh<-cnew[,grepl("hos",colnames(cnew))]
-      cnewi<-data.frame(type=c('hospitalized','hospitalized','hospitalized','hospitalized','hospitalized'),
-                        borough=c("Bronx","Brooklyn","Manhattan","Queens","Staten Island"),
-                        value=c(cnewh[,1],cnewh[,2],cnewh[,3],cnewh[,4],cnewh[,5])) 
-      latest<-rbind(cnewc,cnewe,cnewg,cnewi)
+      latest<-rbind(cnewe,cnewg)
       # custom title of plot
-      tsnew_title <- "Newly situation of the 5 boroughs in New York City"
+      tsnew_title <- "New COVID-19 Confirmed and Probable Cases of the 5 Boroughs in New York City"
       
       # ------------------------- plot -------------------------------------------------
       hchart(latest, "column",
              hcaes(x = borough, y = value, group = type)) %>%
         hc_chart(zoomType = "x") %>%
-        #hc_colors(c("#0015BC", "#FF0000")) %>% need one color for each variable
         hc_legend(align = "center", verticalAlign = "bottom",layout = "horizontal") %>%
         hc_xAxis(title = list(text = "Borough")) %>%
         hc_yAxis(title = list(text = "Count"),
-                 tickInterval = 50,
                  max = max(latest$value)) %>%
         hc_title(text = paste0(tsnew_title)) %>%
-        hc_plotOptions(area = list(lineWidth = 0.5)) %>%
         hc_exporting(enabled = TRUE)
     })
   })
