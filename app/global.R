@@ -34,3 +34,6 @@ covid <- covid %>%rename_all(funs(str_replace_all(., "_7day_avg", " (7day_avg)")
   dplyr::select(-death_count_probable,-incomplete)
 nyc_latest <- covid %>% tail(1)
 nyc_yesterday<- covid[nrow(covid)-1,]
+
+### need to change to Github path
+freemeal <- read.csv('COVID-19_Free_Meals_Locations的副本.csv')

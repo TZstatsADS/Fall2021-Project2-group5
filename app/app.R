@@ -38,6 +38,9 @@ borough_vars <- c("SELECT A BOROUGH" = "",
 # background image address
 nueva_york <- "https://www.telemundo.com/sites/nbcutelemundo/files/styles/nbcnews-fp-1200-630/public/images/article/cover/2020/03/17/nueva_york-coronavirus.jpg?ramen_itok=iqwQftIcTf" 
 
+
+
+#===============================================Shiny UI=========================================================
 ui <- fluidPage(
   tags$style("@import url(https://use.fontawesome.com/releases/v5.7.2/css/all.css);"),
   navbarPage(theme = shinytheme("flatly"), collapsible = TRUE,
@@ -48,81 +51,60 @@ ui <- fluidPage(
              header = tagList(
                useShinydashboard()
              ),
-            
+             # tab 1 (home page)
+             tabPanel('Home',icon = icon("home"),
+                      fluidRow(
+                        tags$img(src = nueva_york, class = "background", width="100%", style = "opacity: 0.70"),
+                        absolutePanel(id = "foreground", class = "foreground-content",
+                                      top = "25%", left = "20%", right = "20%", width = "60%", fixed=FALSE,
+                                      draggable = FALSE, height = 200,
+                                      fluidRow(style = "padding: 7.5%; background-color: white; text-align: center",
+                                               tags$h1("Welcome to the COVID-19 Survival Manual 4 New Yorkers app!", style="font-weight:bold"),tags$br(),
+                                               tags$p("The Coronavirus (Covid-19) has so far infected over 100 million people and caused over 2 million deaths globally. In the US, the City of New York has been hit hardest, which many people lost their jobs or went bankrupt due to the devastating blow for the economy, and had restricted access to clean foods and medication. In this project, our goal is to provide a survival guide to help and support the suffering New Yorkers. ", style="font-weight:italic"),tags$br(),
+                                               tags$h3("Remember, we are in this together!", style="color:#18bc9c; font-weight:bold"),
+                                               tags$h4("We would like to be your source for Coronavirus updates, resources, and trends in New York City.", style="color:#18bc9c")
+                                      ),
+                                      style = "opacity: 0.95")
+                      )
+             ),
              # tab 2 (covid-19 tracker)
-             tabPanel('COVID-19 Tracker', icon = icon("viruses"),
+             tabPanel('COVID-19 Tracker', icon = icon("file-alt"),
                       div(class='coverDiv',
-                          titlePanel("Latest Data on Coronavirus (COVID-19) Cases in New York City"),
-                          span(tags$h5("This page provides up-to-date Covid-19 statistics in NYC including case count, death count, probable count and hospitalized count, as well as a time-series trends plot for a synthetic view.")),
+                          titlePanel("Live Updates on Coronavirus Cases in New York City"),
+                          span(tags$h5("This page provides up-to-date Covid-19 statistics in NYC including case count, death count and hospitalized count, as well as a time-series trends plot for a synthetic view.")),
                           
                           fluidRow(
-                            # Value Boxes for most recent day
-                            column(3, align="center",offset = 1,
-                                   valueBoxOutput(outputId = "NewCasesBox",width = 12)
-                                   ),
-                            column(3, align="center",offset = 1,
-                                   valueBoxOutput(outputId = "NewProbBox",width = 12)
-                                   ),
-                            column(3, align="center",offset = 1,
-                                   valueBoxOutput(outputId = "NewDeathsBox",width = 12)
-                                   )
-                            ),
-                          fluidRow(
-                            # Value Boxes for cumulative result
-                            column(3, align="center",offset = 1,
-                                   valueBoxOutput(outputId = "TCasesBox",width = 12)
-                            ),
-                            column(3, align="center",offset = 1,
-                                   valueBoxOutput(outputId = "NewHospitalizedBox",width = 12)
-                            ),
-                            column(3, align="center",offset = 1,
-                                   valueBoxOutput(outputId = "TDeathsBox",width = 12)
-                            )
+                            # Value Boxes
+                            valueBoxOutput(outputId = "TCasesBox",width = 2),
+                            valueBoxOutput(outputId = "NewCasesBox",width = 2),
+                            valueBoxOutput(outputId = "THospitalizedBox",width = 2),
+                            valueBoxOutput(outputId = "HospitalizedBox",width = 2),
+                            valueBoxOutput(outputId = "TDeathsBox",width = 2),
+                            valueBoxOutput(outputId = "NewDeathsBox",width = 2)
                           ),
-                          span(tags$i(h5("Source: ", tags$a(href="https://data.cityofnewyork.us/Health/COVID-19-Daily-Counts-of-Cases-Hospitalizations-an/rc75-m7u3", "Daily count of NYC Coronavirus Cases. ")," Reported cases are subject to significant variation in reporting organizations.", style="font-weight:italic"))),
+                          span(tags$i(h5("Source: ", tags$a(href="https://github.com/nychealth/coronavirus-data", "NYC Coronavirus Disease 2019 Data.")," Reported cases are subject to significant variation in reporting organizations.", style="color:#045a8d; font-weight:italic"))),
                           tags$br(),
                           span(tags$i(h6(paste0("Last Update on: ", nyc_latest$date_of_interest[1])))),
-                          # plot to compare 5 boroughs
-                          span(tags$h2("Covid-19 Overall Situation of the 5 Boroughs in NYC")),
-                          
-                          fluidRow(
-                            column(4, align="center",
-                                   highchartOutput("tsnewcase",width = "100%",height = "400px")
-                            ),
-                            column(4, align="center",
-                                   highchartOutput("tsnew",width = "100%",height = "400px")
-                            ),
-                            column(4, align="center",
-                                   highchartOutput("tscum",width = "100%",height = "400px")
-                            )
-                          ),
-                          span(tags$h2("Covid-19 Detailed Situation  of the 5 Boroughs in NYC")),
-                          
                           sidebarLayout(position = "left",
                                         sidebarPanel(
-                                          h3("NYC Neighborhoods", style="color:#068bd9"),
+                                          h3("NYC Neighborhoods", style="color:#045a8d"),
+                                          
                                           # select from drop-down lists
                                           selectInput("select_borough", 
                                                       label = NULL, 
                                                       choices = borough_vars, 
                                                       selected = borough_vars[1]),
-                                          # select from checkbox
-                                          h3("Select time series", align = "left", style="color:#068bd9"),
-                                          checkboxInput("daily", label = "Daily", value = TRUE),
-                                          checkboxInput("weekly", label = "Weekly", value = FALSE),tags$br(),
-                                          
-                                          h3("Select the topic(s) to see trends over time", align = "left", style="color:#068bd9"),
+                                          h3("Select the topic(s) to see trends over time:", align = "left", style="color:#045a8d"),
                                           checkboxInput("casesummary", label = "Cases", value = TRUE),
                                           checkboxInput("deathsummary", label = "Deaths", value = FALSE),
                                           checkboxInput("hospsummary", label = "Hospitalization", value = FALSE),tags$br(),
-                                          h4("Instructions for using the plot:", align = "left"),
+                                          h4("Instructions for using the plot:", align = "left", style="color:#3498db"),
                                           h5("1. Select a NYC borough from the drop-down list;"),
-                                          h5("2. Select a time series;"),
-                                          h5("3. Select the topic(s) to plot trends;"),
-                                          h5("4. Move the mouse over lines to see specific points;"),
-                                          h5("5. Click on the legends to hide or show lines;"),
-                                          h5("6. Click on the plot and drag horizontally to select a date range;"),
-                                          h5("7. Click on the button in the top-right corner for more exporting options")
+                                          h5("2. Select the topic(s) to plot trends;"),
+                                          h5("3. Hover the mouse over lines to see specific points;"),
+                                          h5("4. Click on the legends to hide or show lines;"),
+                                          h5("5. Click on the plot and drag horizontally to select a date range;"),
+                                          h5("6. Click on the button in the top-right corner for more exporting options")
                                         ),
                                         mainPanel(
                                           highchartOutput("ts1",width = "100%",height = "560px")
@@ -130,10 +112,48 @@ ui <- fluidPage(
                                         
                           )
                       )
-             )
-  )
-)
+             ),
+             # tab 3 (interactive map)
+             tabPanel("NYCfreemeal", icon = icon("map-marker-alt"),
+                      leafletOutput("mymap", width="100%", height="100%"),
+                      titlePanel("NYC FreeMeal Point"),
+                      mainPanel(leafletOutput("map"))
+                      
+                          
+              
+                                        
+             )    
+                      
+                      
+                      
+             )                  
              
+ )
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
 server <- function(input, output, session) {
   #=========================
   #======== tab 1 ==========
@@ -346,6 +366,33 @@ server <- function(input, output, session) {
         hc_title(text = paste0(tsnew_title)) %>%
         hc_exporting(enabled = TRUE)
     })
+  })
+  color <- colorFactor(topo.colors(5),freemeal$City)
+  output$map <- renderLeaflet({
+    map <- leaflet(freemeal) %>%
+      
+      setView(lng = -73.98928, lat = 40.75042, zoom = 10) %>%
+      addProviderTiles("CartoDB.Positron", options = providerTileOptions(noWrap = TRUE)) %>%
+      addCircleMarkers(
+        lng=~Longitude,
+        lat=~Latitude,
+        color =~color(freemeal$City),
+        
+      ) %>%
+      addLegend(
+        "bottomleft", # Legend position
+        pal=color, # color palette
+        values=~City, # legend values
+        opacity = 1,
+        title="Borough"
+      )
+      
+    
+    
+    
+    
+    
+    
   })
 }
   
