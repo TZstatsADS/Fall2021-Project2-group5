@@ -36,33 +36,37 @@ borough_vars <- c("SELECT A BOROUGH" = "",
                   "STATEN ISLAND" = "Staten Island")
 
 # background image address
-nueva_york <- "https://www.telemundo.com/sites/nbcutelemundo/files/styles/nbcnews-fp-1200-630/public/images/article/cover/2020/03/17/nueva_york-coronavirus.jpg?ramen_itok=iqwQftIcTf" 
+backgroundpic <- "https://images.theconversation.com/files/319995/original/file-20200311-116236-13j08cg.jpg?ixlib=rb-1.1.0&rect=63%2C229%2C5224%2C2608&q=45&auto=format&w=668&h=324&fit=crop" 
 
 
 
 #===============================================Shiny UI=========================================================
 ui <- fluidPage(
-  tags$style("@import url(https://use.fontawesome.com/releases/v5.7.2/css/all.css);"),
-  navbarPage(theme = shinytheme("flatly"), collapsible = TRUE,
-             title= img(src="4newyorker_long.PNG", style="vertical-align= top", height = "180%", width="200"),
-             #HTML('<a style="text-decoration:none;cursor:default;" class="active" href="#">COVID-19 Survival Manual 4 New Yorkers</a>'), 
+  #tags$style("@import url(https://use.fontawesome.com/releases/v5.7.2/css/all.css);"),
+  #titlePanel("Home"),
+  navbarPage(theme = shinytheme("sandstone"), collapsible = TRUE,
+             title= "",
              id="nav",
-             windowTitle = "COVID-19 Survival Manual 4 New Yorkers",
+             windowTitle = "COVID-19 Homeless Manual 4 New Yorkers",
              header = tagList(
                useShinydashboard()
              ),
              # tab 1 (home page)
-             tabPanel('Home',icon = icon("home"),
+             tabPanel('Home',icon = icon("home"), 
                       fluidRow(
-                        tags$img(src = nueva_york, class = "background", width="100%", style = "opacity: 0.70"),
+                        tags$img(src = backgroundpic, class = "background", height="100%", width="100%", style = "opacity: 0.70"),
                         absolutePanel(id = "foreground", class = "foreground-content",
-                                      top = "25%", left = "20%", right = "20%", width = "60%", fixed=FALSE,
-                                      draggable = FALSE, height = 200,
+                                      top = "20%", left = "20%", right = "20%", width = "60%", fixed=FALSE,
+                                      draggable = FALSE, height = 300,
                                       fluidRow(style = "padding: 7.5%; background-color: white; text-align: center",
                                                tags$h1("Welcome to the COVID-19 Survival Manual 4 New Yorkers app!", style="font-weight:bold"),tags$br(),
                                                tags$p("The Coronavirus (Covid-19) has so far infected over 100 million people and caused over 2 million deaths globally. In the US, the City of New York has been hit hardest, which many people lost their jobs or went bankrupt due to the devastating blow for the economy, and had restricted access to clean foods and medication. In this project, our goal is to provide a survival guide to help and support the suffering New Yorkers. ", style="font-weight:italic"),tags$br(),
                                                tags$h3("Remember, we are in this together!", style="color:#18bc9c; font-weight:bold"),
                                                tags$h4("We would like to be your source for Coronavirus updates, resources, and trends in New York City.", style="color:#18bc9c")
+                                      ),
+                                      fluidRow(style = "padding: 7.5%; background-color: white; text-align: center",
+                                               tags$img(src = "meli.jpg",  width="100%"),
+                                               imageOutput('image')
                                       ),
                                       style = "opacity: 0.95")
                       )
@@ -97,8 +101,7 @@ ui <- fluidPage(
                                    valueBoxOutput(outputId = "TDeathsBox",width = 12)
                             )
                           ),
-                          span(tags$i(h5("Source: ", tags$a(href="https://data.cityofnewyork.us/Health/COVID-19-Daily-Counts-of-Cases-Hospitalizations-an/rc75-m7u3", "Daily count of NYC Coronavirus Cases. ")," Reported cases are subject to significant variation in reporting organizations.", style="font-weight:italic"))),
-                          tags$br(),
+                          span(tags$i(h5("Source: ", tags$a(href="https://data.cityofnewyork.us/Health/COVID-19-Daily-Counts-of-Cases-Hospitalizations-an/rc75-m7u3", "NYC Open Data. ")," Data are preliminary and subject to change.", style="font-weight:italic"))),
                           span(tags$i(h6(paste0("Last Update on: ", nyc_latest$date_of_interest[1])))),
                           # plot to compare 5 boroughs
                           span(tags$h2("Covid-19 Overall Situation of the 5 Boroughs in NYC")),
@@ -149,8 +152,8 @@ ui <- fluidPage(
                           )
                       )
              ),
-             # tab 3 (interactive map)
-             tabPanel("NYCfreemeal", icon = icon("map-marker-alt"),
+             # tab 3 (free meal interactive map)
+             tabPanel("NYC Free Meal", icon = icon("map-marker-alt"),
                       leafletOutput("mymap", width="100%", height="100%"),
                       titlePanel("NYC FreeMeal Point"),
                       mainPanel(leafletOutput("map"))
@@ -161,46 +164,40 @@ ui <- fluidPage(
              ),
                     
              # tab 4 (shelter)  
-             tabPanel("Shelter", icon = icon("list-alt"),
-                     h2("The Shelter data"),
+             tabPanel("Shelter", icon = icon("hotel"),
+                     h2("The Shelter Data"),
                      DT::dataTableOutput("vaccine_table"),
                      h2("More information about shelter_offered type"),
                      uiOutput("tab"),
                      uiOutput("vac")
+             ),
+             # tab 5 (appendix)  
+             tabPanel("Appendix", icon = icon("info-circle"),
+                      h2("Data Sources:"),
+                      tags$b("NYC COVID-19 Open Data: "), tags$a(href="https://data.cityofnewyork.us/Health/COVID-19-Daily-Counts-of-Cases-Hospitalizations-an/rc75-m7u3", "COVID-19 Daily Counts of Cases, Hospitalizations, and Deaths."),tags$br(),
+                      tags$b("Google COVID-19 Mobility Data: "), tags$a(href="https://www.google.com/covid19/mobility/", "Google's COVID-19 Community Mobility Reports."),tags$br(),
+                      tags$b("Shiny Dashboard: "), tags$a(href="https://github.com/TZstatsADS/Spring2021-Project2-group5", "4New Yorkers Covid Survival Manual's Github repository."),
+                      tags$br(),tags$br(),tags$h2("Contacts:"),
+                      tags$a(href="mailto:mb4786@columbia.edu", "Mellisa Bischoff"), ", Columbia University",tags$br(),
+                      tags$a(href="mailto:xc2578@columbia.edu", "Xueying Chen"),", Columbia University",tags$br(),
+                      tags$a(href="mailto:jl5886@columbia.edu", "Jing Lu"),", Columbia University",tags$br(),
+                      tags$a(href="mailto:yw3727@columbia.edu", "Yalin Wang"),", Columbia University",tags$br(),
+                      tags$a(href="mailto:yw3598@columbia.edu", "Yarong Wang"),", Columbia University",tags$br(),
+                      tags$br(),tags$br(),tags$h2("Github Page:"),
+                      tags$a(href="https://github.com/TZstatsADS/Fall2021-Project2-group5", "See code in our Github repository"),tags$br(),tags$br())
              )
-             
-             
-                      
-                      
-             )                  
-             
  )
    
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
           
 server <- function(input, output, session) {
+  #home page graph
+  output$image <- renderImage({
+    list(src = "./www/meli.png")
+  }, deleteFile = TRUE)
   #=========================
   #======== tab 1 ==========
   #=========================
