@@ -36,4 +36,5 @@ nyc_latest <- covid %>% tail(1)
 nyc_yesterday<- covid[nrow(covid)-1,]
 
 ### need to change to Github path
-freemeal <- read.csv('COVID-19_Free_Meals_Locations的副本.csv')
+freemeal <- readr::read_csv('./output/COVID-19_Free_Meals_Locations.csv')
+shelters=read.csv(file="./output/sorted_shelter_by_date_borough.csv")

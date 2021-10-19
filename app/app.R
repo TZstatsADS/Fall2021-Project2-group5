@@ -122,8 +122,18 @@ ui <- fluidPage(
                           
               
                                         
-             )    
-                      
+             ),
+                    
+             # tab 4 (shelter)  
+             tabPanel("Shelter", icon = icon("list-alt"),
+                     h2("The Shelter data"),
+                     DT::dataTableOutput("vaccine_table"),
+                     h2("More information about shelter_offered type"),
+                     uiOutput("tab"),
+                     uiOutput("vac")
+             )
+             
+             
                       
                       
              )                  
@@ -390,6 +400,17 @@ server <- function(input, output, session) {
     
     
     
+    
+    
+    
+  })
+  
+  output$vaccine_table = DT::renderDataTable({
+    shelters[3:6]})
+  
+  url1 <- a("shelters", href="https://data.cityofnewyork.us/Social-Services/Individual-Census-by-Borough-Community-District-an/veav-vj3r")
+  output$tab <- renderUI({
+    tagList("URL link :", url1)
     
     
     
