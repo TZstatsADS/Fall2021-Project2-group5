@@ -15,7 +15,7 @@ cleanCols <- function(x){
   return(clean_df_cols)
 }
 ```
-```{r}
+```{r, fig.height = 4, fig.width = 6}
 dhs_data_dashboard = read.csv('../data/department_of_homeless_services/DHS_Data_Dashboard.csv')
 dhs_daily_report = read.csv('../data/department_of_homeless_services/DHS_Daily_Report.csv')
 buildings = read.csv('../data/department_of_homeless_services/Buildings_by_Borough_and_Community_District.csv')
@@ -31,9 +31,12 @@ names(free_covid_meals) = cleanCols(free_covid_meals)
 names(doh_offices) = cleanCols(doh_offices)
 
 dhs_data_dashboard = mutate(dhs_data_dashboard, id = row_number())
+dhs_data_dashboard$date = as.Date(dhs_data_dashboard$report_date,
+                                         format = "%m/%d/%Y")
+dhs_data_dashboard$newdate = format(dhs_data_dashboard$date, "%Y-%m-%d")
 
-pre_covid_data = dhs_data_dashboard[0:57,c('id','sa_avg_daily_census_individual_in_shelter_total','newdate')]
-fit = lm(sa_avg_daily_census_individual_in_shelter_total ~ poly(id, degree=3),
+pre_covid_data = dhs_data_dashboard[0:57,c('id','sa_avg_daily_census_individual_in_shelter__total','newdate')]
+fit = lm(sa_avg_daily_census_individual_in_shelter__total ~ poly(id, degree=3),
          data = pre_covid_data)
 
 data = data.frame(id = seq(1,57,1))
@@ -43,20 +46,33 @@ new_data = data.frame(id = seq(58,72,1))
 new_data$fitted = predict(fit, newdata = new_data)
 
 full_data = rbind(data,new_data)
-full_data$sa_avg_daily_census_individual_in_shelter_total = dhs_data_dashboard$sa_avg_daily_census_individual_in_shelter_total
+full_data$sa_avg_daily_census_individual_in_shelter__total = dhs_data_dashboard$sa_avg_daily_census_individual_in_shelter__total
 full_data$newdate = dhs_data_dashboard$newdate
 
 ggplot(full_data,
        aes(x = newdate, 
-           y = sa_avg_daily_census_individual_in_shelter_total,
+           y = sa_avg_daily_census_individual_in_shelter__total,
            group = 1)) +
-  geom_line() +
-  geom_vline(xintercept = dhs_data_dashboard$id[57],
-             linetype="dotted",
-             color = "red",
-             size=.75) +
+  geom_line(aes(
+    x=newdate,
+    y=sa_avg_daily_census_individual_in_shelter__total,
+    color = "actual values")) +
+  geom_vline(aes(
+    xintercept = dhs_data_dashboard$id[57],
+    color = "covid start"),
+    size=.7,
+    linetype="dotted") +
   theme(axis.text.x = element_text(angle = 90)) +
-  geom_line(aes(y = fitted), size = 1)
+  geom_line(aes(
+    y = fitted,
+    color = "fitted values"),
+    size = .7) +
+  scale_y_continuous(name = "Individuals in Shelter") +
+  scale_x_discrete(name = "Month") +
+  ggtitle("Monthly Indivduals in Homeless Shelters") +
+  scale_colour_manual("", 
+                      breaks = c("actual values", "covid start", "fitted values"),
+                      values = c("darkblue", "red", "lightblue"))
 ```
 
 
