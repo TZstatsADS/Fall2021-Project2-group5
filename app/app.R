@@ -65,7 +65,7 @@ ui <- fluidPage(
                                                tags$h4("We would like to be your source for Coronavirus updates, resources, and trends in New York City.", style="color:#18bc9c")
                                       ),
                                       fluidRow(style = "padding: 7.5%; background-color: white; text-align: center",
-                                               tags$img(src = "meli.jpg",  width="100%"),
+                                               tags$img(src = "meli.jpg",  width="100%",hight = '100%'),
                                                imageOutput('image')
                                       ),
                                       style = "opacity: 0.95")
