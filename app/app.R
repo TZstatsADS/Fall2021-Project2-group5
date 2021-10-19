@@ -410,7 +410,7 @@ server <- function(input, output, session) {
         hc_exporting(enabled = TRUE)
     })
   })
-  color <- colorFactor(topo.colors(5),freemeal$City)
+  color <- colorFactor(c("red","yellow","green","blue","black"),freemeal$City)
   output$map <- renderLeaflet({
     map <- leaflet(freemeal) %>%
       
