@@ -68,43 +68,79 @@ ui <- fluidPage(
                       )
              ),
              # tab 2 (covid-19 tracker)
-             tabPanel('COVID-19 Tracker', icon = icon("file-alt"),
+             tabPanel('COVID-19 Tracker', icon = icon("viruses"),
                       div(class='coverDiv',
-                          titlePanel("Live Updates on Coronavirus Cases in New York City"),
-                          span(tags$h5("This page provides up-to-date Covid-19 statistics in NYC including case count, death count and hospitalized count, as well as a time-series trends plot for a synthetic view.")),
+                          titlePanel("Latest Data on Coronavirus (COVID-19) Cases in New York City"),
+                          span(tags$h5("This page provides up-to-date Covid-19 statistics in NYC including case count, death count, probable count and hospitalized count, as well as a time-series trends plot for a synthetic view.")),
                           
                           fluidRow(
-                            # Value Boxes
-                            valueBoxOutput(outputId = "TCasesBox",width = 2),
-                            valueBoxOutput(outputId = "NewCasesBox",width = 2),
-                            valueBoxOutput(outputId = "THospitalizedBox",width = 2),
-                            valueBoxOutput(outputId = "HospitalizedBox",width = 2),
-                            valueBoxOutput(outputId = "TDeathsBox",width = 2),
-                            valueBoxOutput(outputId = "NewDeathsBox",width = 2)
+                            # Value Boxes for most recent day
+                            column(3, align="center",offset = 1,
+                                   valueBoxOutput(outputId = "NewCasesBox",width = 12)
+                            ),
+                            column(3, align="center",offset = 1,
+                                   valueBoxOutput(outputId = "NewProbBox",width = 12)
+                            ),
+                            column(3, align="center",offset = 1,
+                                   valueBoxOutput(outputId = "NewDeathsBox",width = 12)
+                            )
                           ),
-                          span(tags$i(h5("Source: ", tags$a(href="https://github.com/nychealth/coronavirus-data", "NYC Coronavirus Disease 2019 Data.")," Reported cases are subject to significant variation in reporting organizations.", style="color:#045a8d; font-weight:italic"))),
+                          fluidRow(
+                            # Value Boxes for cumulative result
+                            column(3, align="center",offset = 1,
+                                   valueBoxOutput(outputId = "TCasesBox",width = 12)
+                            ),
+                            column(3, align="center",offset = 1,
+                                   valueBoxOutput(outputId = "NewHospitalizedBox",width = 12)
+                            ),
+                            column(3, align="center",offset = 1,
+                                   valueBoxOutput(outputId = "TDeathsBox",width = 12)
+                            )
+                          ),
+                          span(tags$i(h5("Source: ", tags$a(href="https://data.cityofnewyork.us/Health/COVID-19-Daily-Counts-of-Cases-Hospitalizations-an/rc75-m7u3", "Daily count of NYC Coronavirus Cases. ")," Reported cases are subject to significant variation in reporting organizations.", style="font-weight:italic"))),
                           tags$br(),
                           span(tags$i(h6(paste0("Last Update on: ", nyc_latest$date_of_interest[1])))),
+                          # plot to compare 5 boroughs
+                          span(tags$h2("Covid-19 Overall Situation of the 5 Boroughs in NYC")),
+                          
+                          fluidRow(
+                            column(4, align="center",
+                                   highchartOutput("tsnewcase",width = "100%",height = "400px")
+                            ),
+                            column(4, align="center",
+                                   highchartOutput("tsnew",width = "100%",height = "400px")
+                            ),
+                            column(4, align="center",
+                                   highchartOutput("tscum",width = "100%",height = "400px")
+                            )
+                          ),
+                          span(tags$h2("Covid-19 Detailed Situation  of the 5 Boroughs in NYC")),
+                          
                           sidebarLayout(position = "left",
                                         sidebarPanel(
-                                          h3("NYC Neighborhoods", style="color:#045a8d"),
-                                          
+                                          h3("NYC Neighborhoods", style="color:#068bd9"),
                                           # select from drop-down lists
                                           selectInput("select_borough", 
                                                       label = NULL, 
                                                       choices = borough_vars, 
                                                       selected = borough_vars[1]),
-                                          h3("Select the topic(s) to see trends over time:", align = "left", style="color:#045a8d"),
+                                          # select from checkbox
+                                          h3("Select time series", align = "left", style="color:#068bd9"),
+                                          checkboxInput("daily", label = "Daily", value = TRUE),
+                                          checkboxInput("weekly", label = "Weekly", value = FALSE),tags$br(),
+                                          
+                                          h3("Select the topic(s) to see trends over time", align = "left", style="color:#068bd9"),
                                           checkboxInput("casesummary", label = "Cases", value = TRUE),
                                           checkboxInput("deathsummary", label = "Deaths", value = FALSE),
                                           checkboxInput("hospsummary", label = "Hospitalization", value = FALSE),tags$br(),
-                                          h4("Instructions for using the plot:", align = "left", style="color:#3498db"),
+                                          h4("Instructions for using the plot:", align = "left"),
                                           h5("1. Select a NYC borough from the drop-down list;"),
-                                          h5("2. Select the topic(s) to plot trends;"),
-                                          h5("3. Hover the mouse over lines to see specific points;"),
-                                          h5("4. Click on the legends to hide or show lines;"),
-                                          h5("5. Click on the plot and drag horizontally to select a date range;"),
-                                          h5("6. Click on the button in the top-right corner for more exporting options")
+                                          h5("2. Select a time series;"),
+                                          h5("3. Select the topic(s) to plot trends;"),
+                                          h5("4. Move the mouse over lines to see specific points;"),
+                                          h5("5. Click on the legends to hide or show lines;"),
+                                          h5("6. Click on the plot and drag horizontally to select a date range;"),
+                                          h5("7. Click on the button in the top-right corner for more exporting options")
                                         ),
                                         mainPanel(
                                           highchartOutput("ts1",width = "100%",height = "560px")
