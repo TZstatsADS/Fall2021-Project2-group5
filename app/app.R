@@ -138,11 +138,11 @@ ui <- fluidPage(
                                           checkboxInput("hospsummary", label = "Hospitalization", value = FALSE),tags$br(),
                                           h4("Instructions for using the plot:", align = "left"),
                                           h5("1. Select a NYC borough from the drop-down list;"),
-                                          h5("2. Select a time series;"),
+                                          h5("2. Select the time series;"),
                                           h5("3. Select the topic(s) to plot trends;"),
-                                          h5("4. Move the mouse over lines to see specific points;"),
-                                          h5("5. Click on the legends to hide or show lines;"),
-                                          h5("6. Click on the plot and drag horizontally to select a date range;"),
+                                          h5("4. Note that at least one checkbox should be choosed for each section, otherwirse it will give you an error;"),
+                                          h5("5. Move the mouse over lines to see specific points;"),
+                                          h5("6. Click on the legends to hide or show lines;"),
                                           h5("7. Click on the button in the top-right corner for more exporting options")
                                         ),
                                         mainPanel(
