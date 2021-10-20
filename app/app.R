@@ -170,7 +170,7 @@ ui <- fluidPage(
              tabPanel("Conclusion", icon = icon("pen-alt"),
                        
                       fluidRow(
-                        tags$img(src = b2,  height="60%", width="100%", style = "opacity: 0.70"),
+                        tags$img(src = 'back.jpg',  height="60%", width="100%", style = "opacity: 0.70"),
                         absolutePanel(id = "foreground", class = "foreground-content",
                                       top = "10%", left = "20%", right = "20%", width = "60%", fixed=FALSE,
                                       draggable = FALSE, height = 300,

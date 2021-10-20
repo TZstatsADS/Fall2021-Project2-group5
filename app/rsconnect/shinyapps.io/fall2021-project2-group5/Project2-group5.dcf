@@ -1,0 +1,14 @@
+name: Project2-group5
+title: Project2-group5
+username:
+account: fall2021-project2-group5
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4918424
+bundleId: 5159866
+url: https://fall2021-project2-group5.shinyapps.io/Project2-group5/
+when: 1634758892.88849
+lastSyncTime: 1634758892.8885
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: .RData|output/.DS_Store|output/.ipynb_checkpoints/data_processing-checkpoint.ipynb|README.md|www/.DS_Store
