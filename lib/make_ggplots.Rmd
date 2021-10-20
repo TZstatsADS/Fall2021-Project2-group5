@@ -59,17 +59,24 @@ ggplot(full_data,
   geom_line(aes(
     x=newdate,
     y=sa_avg_daily_census_individual_in_shelter__total,
-    color = "actual values")) +
+    color = "actual values"),
+    size = 1) +
   geom_vline(aes(
     xintercept = dhs_data_dashboard$id[57],
     color = "covid start"),
-    size=.7,
+    size=1.2,
     linetype="dotted") +
-  theme(axis.text.x = element_text(angle = 90)) +
+  theme(
+    axis.text.x = element_text(
+      angle = 45,
+      size = 12,
+      vjust = .5),
+    text = element_text(size=15)
+    ) +
   geom_line(aes(
     y = fitted,
     color = "fitted values"),
-    size = .7) +
+    size = 1) +
   scale_y_continuous(name = "Individuals in Shelter") +
   scale_x_discrete(
     name = "Month",
@@ -83,6 +90,50 @@ ggplot(full_data,
     )
 ```
 
+```{r}
 
+buildings$total = coalesce(buildings$adult_family_comm_hotel,0) + coalesce(buildings$adult_family_shelter,0) + coalesce(buildings$adult_shelter,0) + coalesce(buildings$adult_shelter_comm_hotel,0) 
+
+gpd_buildings = aggregate(buildings$total, by=list(date=buildings$report_date, borough = buildings$borough), FUN=sum)
+
+gpd_buildings$date = as.Date(gpd_buildings$date,
+                                         format = "%m/%d/%Y")
+gpd_buildings$newdate = format(gpd_buildings$date, "%Y-%m-%d")
+
+xlabels = gpd_buildings$newdate
+xlabels[seq(2, length(xlabels), 2)] <- "   "
+
+ggplot(gpd_buildings,
+       aes(x = date, 
+           y = x,
+           group = borough,
+           color = borough)) +
+  geom_line() +
+  theme(
+    axis.text.x = element_text(
+      angle = 45,
+      size = 14,
+      vjust = .5),
+    axis.text.y = element_text(
+      angle = 45,
+      size = 14,
+      vjust = .5)) + 
+  scale_y_continuous(
+    name = "Buildings"
+  ) +
+  scale_x_date(
+    name = "Month",
+    date_breaks = "3 month", 
+    date_labels =  "%m-%Y"
+    ) + 
+  geom_vline(aes(
+    xintercept = date[6],
+    color = "covid start"),
+    size=1.2,
+    linetype="dotted") +
+  ggtitle(
+    "Number of Homeless Shelters by Borough"
+  )
+```
 
 

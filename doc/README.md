@@ -1,5 +1,3 @@
 # Project 2: Shiny App Development
 
-### Doc folder
-
-The doc directory contains the report or presentation files. It can have subfolders.  
+See our app on the NYC Department of Homeless Services' Effort during the Pandemic here: https://fall2021-project2-group5.shinyapps.io/test2/
