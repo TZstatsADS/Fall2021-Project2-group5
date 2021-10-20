@@ -1,6 +1,5 @@
 if(!require(devtools)) install.packages("devtools", repos = "http://cran.us.r-project.org")
 if(!require(RSocrata)) devtools::install_github("Chicago/RSocrata")
-#if(!require(fontawesome)) devtools::install_github("rstudio/fontawesome")
 if(!require(forcats)) install.packages("forcats", repos = "http://cran.us.r-project.org")
 if(!require(stringr)) install.packages("stringr", repos = "http://cran.us.r-project.org")
 if(!require(dplyr)) install.packages("dplyr", repos = "http://cran.us.r-project.org")
