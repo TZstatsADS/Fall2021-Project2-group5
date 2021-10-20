@@ -1,21 +1,16 @@
-DOH (Department of Homeless Services) data sets that we talked about on 10/11
+The datasets used in this project and their source links are:
 
-The datasets and their source links are:
-
+*Directory of Homebase Locations*
 https://data.cityofnewyork.us/Social-Services/Directory-Of-Homebase-Locations/ntcm-2w4k
-Directory_Of_Homebase_Locations.csv
 
+*DHS Data Dashboard*
 https://data.cityofnewyork.us/Social-Services/DHS-Data-Dashboard/5e9h-x6ak
-dhs_data_dashboard = DHS_Data_Dashboard.csv
 
-https://data.cityofnewyork.us/Social-Services/DHS-Daily-Report/k46n-sa2m
-dhs_daily_report = DHS_Daily_Report.csv
-
+*Buildings by Borough and Community District*
 https://data.cityofnewyork.us/Social-Services/Buildings-by-Borough-and-Community-District/3qem-6v3v
-buildings = Buildings_by_Borough_and_Community_District.csv
 
-https://data.cityofnewyork.us/Social-Services/Individual-Census-by-Borough-Community-District-an/veav-vj3r
-individual_census = Individual_Census_by_Borough__Community_District__and_Facility_Type.csv
-
+*COVID-19 Free Meals Locations*
 https://data.cityofnewyork.us/Education/COVID-19-Free-Meals-Locations/sp4a-vevi
-free_covid_meals = COVID-19_Free_Meals_Locations.csv
+
+*COVID-19  Daily Counts of Cases Hospitalizations*
+https://data.cityofnewyork.us/Health/COVID-19-Daily-Counts-of-Cases-Hospitalizations-an/rc75-m7u3

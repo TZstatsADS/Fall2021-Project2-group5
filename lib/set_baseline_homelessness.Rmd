@@ -48,6 +48,9 @@ new_data$fitted = predict(fit, newdata = new_data)
 full_data = rbind(data,new_data)
 full_data$sa_avg_daily_census_individual_in_shelter__total = dhs_data_dashboard$sa_avg_daily_census_individual_in_shelter__total
 full_data$newdate = dhs_data_dashboard$newdate
+xlabels = full_data$newdate
+xlabels[seq(2, length(xlabels), 2)] <- "   "
+
 
 ggplot(full_data,
        aes(x = newdate, 
@@ -68,11 +71,16 @@ ggplot(full_data,
     color = "fitted values"),
     size = .7) +
   scale_y_continuous(name = "Individuals in Shelter") +
-  scale_x_discrete(name = "Month") +
+  scale_x_discrete(
+    name = "Month",
+    labels = xlabels
+    ) +
   ggtitle("Monthly Indivduals in Homeless Shelters") +
-  scale_colour_manual("", 
-                      breaks = c("actual values", "covid start", "fitted values"),
-                      values = c("darkblue", "red", "lightblue"))
+  scale_colour_manual(
+    "", 
+    breaks = c("actual values", "covid start", "fitted values"),
+    values = c("darkblue", "red", "lightblue")
+    )
 ```
 
 
