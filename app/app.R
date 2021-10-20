@@ -35,8 +35,8 @@ borough_vars <- c("SELECT A BOROUGH" = "",
                   "STATEN ISLAND" = "Staten Island")
 
 # background image address
-backgroundpic <- "https://images.theconversation.com/files/319995/original/file-20200311-116236-13j08cg.jpg?ixlib=rb-1.1.0&rect=63%2C229%2C5224%2C2608&q=45&auto=format&w=668&h=324&fit=crop" 
-
+backgroundpic <- "https://images.unsplash.com/photo-1609945648638-cefddce6e6d8?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2532&q=80" 
+b2 <- "http://america.aljazeera.com/content/ajam/articles/2014/3/12/record-breaking-nychomelessnessblamedonforprofitsheltersreport/jcr:content/mainpar/adaptiveimage/src.adapt.960.high.NYC_homeless_031214.1394670416421.jpg"
 #===============================================Shiny UI=========================================================
 ui <- fluidPage(
   navbarPage(theme = shinytheme("sandstone"), collapsible = TRUE,
@@ -49,7 +49,7 @@ ui <- fluidPage(
              # tab 1 (home page)
              tabPanel('Home',icon = icon("home"), 
                       fluidRow(
-                        tags$img(src = backgroundpic, class = "background", height=800, width="100%", style = "opacity: 0.70"),
+                        tags$img(src = backgroundpic, class = "background", height="100%", width="100%", style = "opacity: 0.90"),
                         absolutePanel(id = "foreground", class = "foreground-content",
                                       top = "10%", left = "20%", right = "20%", width = "60%", fixed=FALSE,
                                       draggable = FALSE, height = 300,
@@ -168,14 +168,19 @@ ui <- fluidPage(
              ), 
              # tab 5 (Conclusion)
              tabPanel("Conclusion", icon = icon("pen-alt"),
-                      #add conclusion here
-                      #id = "foreground", class = "foreground-content",
-                      #top = "10%", left = "20%", right = "20%", width = "60%", fixed=FALSE,
-                      #draggable = FALSE, height = 300,
-                      fluidRow(tags$p("  After comparing the number of homeless people to the amount of homeless shelters and free meal program, we see that the NYC DHS made a significant effort to mitigate homelessness during the pandemic. We still see that the amount of homeless people is higher during the pandemic than the expected amount if there were no pandemic; however, without the DHS's intervention with programs such as free meals and increasing shelters, this number could have been much higher. We suggest the DHS keep on offering these types of programs as it is successful in mitigating homelessness.", 
-                             style="font-size: large; line-height: 36px"))             
-                      
                        
+                      fluidRow(
+                        tags$img(src = b2,  height="60%", width="100%", style = "opacity: 0.70"),
+                        absolutePanel(id = "foreground", class = "foreground-content",
+                                      top = "10%", left = "20%", right = "20%", width = "60%", fixed=FALSE,
+                                      draggable = FALSE, height = 300,
+                                      
+                                      fluidRow(style = "padding: 7.5%; background-color: white",
+                                               tags$p("  After comparing the number of homeless people to the amount of homeless shelters and free meal program, we see that the NYC DHS made a significant effort to mitigate homelessness during the pandemic. We still see that the amount of homeless people is higher during the pandemic than the expected amount if there were no pandemic; however, without the DHS's intervention with programs such as free meals and increasing shelters, this number could have been much higher. We suggest the DHS keep on offering these types of programs as it is successful in mitigating homelessness.", 
+                                                      style="font-size: large; line-height: 36px")
+                                      ),
+                                      style = "opacity: 0.95")
+                      )
              ), 
              # tab 6 (appendix)  
              tabPanel("Appendix", icon = icon("info-circle"),
