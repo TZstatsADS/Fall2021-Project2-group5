@@ -4,7 +4,6 @@ source("global.R")
 if(!require(devtools)) install.packages("devtools", repos = "http://cran.us.r-project.org")
 if(!require(highcharter)) devtools::install_github("jbkunst/highcharter")
 if(!require(RSocrata)) devtools::install_github("Chicago/RSocrata")
-#if(!require(fontawesome)) devtools::install_github("rstudio/fontawesome")
 if(!require(forcats)) install.packages("forcats", repos = "http://cran.us.r-project.org")
 if(!require(stringr)) install.packages("stringr", repos = "http://cran.us.r-project.org")
 if(!require(dplyr)) install.packages("dplyr", repos = "http://cran.us.r-project.org")
@@ -43,7 +42,7 @@ ui <- fluidPage(
   navbarPage(theme = shinytheme("sandstone"), collapsible = TRUE,
              title= "",
              id="nav",
-             windowTitle = "The Department of Homeless Services during the Pandemic",
+             windowTitle = "The NYC Department of Homeless Services during the COVID-19 Pandemic",
              header = tagList(
                useShinydashboard()
              ),
@@ -56,13 +55,13 @@ ui <- fluidPage(
                                       draggable = FALSE, height = 300,
                                       
                                       fluidRow(style = "padding: 7.5%; background-color: white",
-                                               tags$h1("Welcome to the ?? App!", style="font-weight:bold; text-align: center; color:#2e81ce"),tags$br(),
+                                               tags$h1("Welcome to explore the NYC Department of Homeless Services during the COVID-19 Pandemic!", style="font-weight:bold; text-align: center; color:#2e81ce"),tags$br(),
                                                tags$p("The COVID-19 pandemic has produced a unique set of public health challenges. But the pandemic has exacerbated national crises that existed long before the coronavirus. Nowhere is this more evident than in the pandemic’s influence on homelessness and affordable housing. In our project we present data from the NYC Department of Homeless Services to analyze how the department was effected by the pandemic and whether or not the programs they put in place during this time were effective."
-                                                      ,style="font-size:medium"),
+                                                      ,style="font-size:large"),
                                                tags$img(src = "meli.jpg",  width="100%"),
-                                               imageOutput('image')),
                                                tags$p("A polynomial regression is used to fit the data, we trained the model using only the pre-pandemic data and used the trained model to predict homelessness in the months after the pandemic hit. This model gives us an idea of what homelessness would look like if there were no pandemic. When we compared the post-pandemic predicted homelessness numbers to the actual homelessness numbers, we see that the predicted homelessness from the model are significantly lower than the real numbers. This re-enforces the idea that the homelessness crisis was exacerbated during the pandemic and the NYC Department of Homeless Services had to do something to mitigate this crisis. Whether or not these numbers would have been higher if the Department of Homeless Services hadn't initiated any extra programs is hard to say."
-                                                      , style="font-size:medium"),
+                                                      , style="font-size:large")
+                                               ),
                                       style = "opacity: 0.95")
                       )
              ),
@@ -70,7 +69,7 @@ ui <- fluidPage(
              tabPanel('COVID-19 Tracker', icon = icon("viruses"),
                       div(class='coverDiv',
                           titlePanel("Latest Data on Coronavirus (COVID-19) Cases in New York City"),
-                          span(tags$h5("This page provides up-to-date Covid-19 statistics in NYC including case count, death count, probable count and hospitalized count, as well as a time-series trends plot for a synthetic view.")),
+                          span(tags$h4("This page provides up-to-date Covid-19 statistics in NYC including case count, death count, probable count and hospitalized count, as well as a time-series trends plot for each borough.")),
                           fluidRow(
                             # Value Boxes for most recent day
                             column(3, align="center",offset = 1,
@@ -152,15 +151,17 @@ ui <- fluidPage(
              # tab 3 (shelter)  
              tabPanel("Shelter", icon = icon("hotel"),
                      h2("The Shelter Data"),
+                     h4("Here is a tool that can be used to search homeless shelters by borough."),
                      DT::dataTableOutput("vaccine_table"),
-                     h2("More information about shelter_offered type"),
-                     uiOutput("tab"),
-                     uiOutput("vac")
+                     h5("See more information about shelter_offered type through links in Data Sources under Appendix tab"),tags$br(),
+                     span(tags$h4("Below, we plotted the amount of homeless shelters in NYC by borough over time. We can see that generally, the amount of shelters increases in each borough over time. Each borough except for the Bronx and Staten Island have sharp increases in shelters a couple months after the pandemic hit in March 2020. Comparing this graph to the graph on the homepage of individuals in homeless shelters, we see that the creation of new homeless shelters slightly lagged behind the increase of homeless people. This is understandable as it takes time to build shelters, but it is good that they were increased right after the pandemic hit the states in March 2020."
+                                  , style="line-height: 30px")),
+                     tags$img(src = "shel.png",  width="60%")
              ),
              # tab 4 (free meal interactive map)
              tabPanel("NYC Free Meal", icon = icon("map-marker-alt"),
                       titlePanel("NYC Free Meal Point"),
-                      span(tags$h4(" One program that the Department of Homeless Services did start during the pandemic was to offer free meals to homeless people. Here, we made a map that shows where these free meals are available.")),
+                      span(tags$h4("One program that the Department of Homeless Services did start during the pandemic was to offer free meals to homeless people. Here, we made a map that shows where these free meals are available.")),
                       leafletOutput("mymap", width="100%", height="100%"),
                       mainPanel(leafletOutput("map"))
                                             
@@ -168,10 +169,13 @@ ui <- fluidPage(
              # tab 5 (Conclusion)
              tabPanel("Conclusion", icon = icon("pen-alt"),
                       #add conclusion here
+                      #id = "foreground", class = "foreground-content",
+                      #top = "10%", left = "20%", right = "20%", width = "60%", fixed=FALSE,
+                      #draggable = FALSE, height = 300,
+                      fluidRow(tags$p("  After comparing the number of homeless people to the amount of homeless shelters and free meal program, we see that the NYC DHS made a significant effort to mitigate homelessness during the pandemic. We still see that the amount of homeless people is higher during the pandemic than the expected amount if there were no pandemic; however, without the DHS's intervention with programs such as free meals and increasing shelters, this number could have been much higher. We suggest the DHS keep on offering these types of programs as it is successful in mitigating homelessness.", 
+                             style="font-size: large; line-height: 36px"))             
                       
-                      
-                      
-                      
+                       
              ), 
              # tab 6 (appendix)  
              tabPanel("Appendix", icon = icon("info-circle"),
@@ -196,10 +200,6 @@ ui <- fluidPage(
 
           
 server <- function(input, output, session) {
-  #home page graph
-  output$image <- renderImage({
-    list(src = "./www/meli.png")
-  }, deleteFile = TRUE)
   #=========================
   #======== tab 1 ==========
   #=========================
@@ -350,7 +350,6 @@ server <- function(input, output, session) {
       hchart(cum, "column",
              hcaes(x = borough, y = value, group = type)) %>%
         hc_chart(zoomType = "x") %>%
-        #hc_colors(c("#0015BC", "#FF0000")) %>% need one color for each variable
         hc_legend(align = "center", verticalAlign = "bottom",layout = "horizontal") %>%
         hc_xAxis(title = list(text = "Borough")) %>%
         hc_yAxis(title = list(text = "Count"),
@@ -416,7 +415,6 @@ server <- function(input, output, session) {
   color <- colorFactor(c("red","yellow","green","blue","black"),freemeal$City)
   output$map <- renderLeaflet({
     map <- leaflet(freemeal) %>%
-      
       setView(lng = -73.98928, lat = 40.75042, zoom = 10) %>%
       addProviderTiles("CartoDB.Positron", options = providerTileOptions(noWrap = TRUE)) %>%
       addCircleMarkers(
@@ -431,18 +429,13 @@ server <- function(input, output, session) {
         opacity = 1,
         title="Borough"
       )
-      
-    
-    
   })
   #shelter
   output$vaccine_table = DT::renderDataTable({shelters[3:6]})
-  url1 <- a("shelters", href="https://data.cityofnewyork.us/Social-Services/Individual-Census-by-Borough-Community-District-an/veav-vj3r")
-  output$tab <- renderUI({
-    tagList("URL link :", url1)
-   
-      
-  })
+  #url1 <- a("shelters", href="https://data.cityofnewyork.us/Social-Services/Individual-Census-by-Borough-Community-District-an/veav-vj3r")
+  #output$tab <- renderUI({
+   # tagList("URL link :", url1)
+  #})
 }
   
 shiny::shinyApp(ui, server)
