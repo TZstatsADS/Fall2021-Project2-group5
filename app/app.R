@@ -4,7 +4,7 @@ source("global.R")
 if(!require(devtools)) install.packages("devtools", repos = "http://cran.us.r-project.org")
 if(!require(highcharter)) devtools::install_github("jbkunst/highcharter")
 if(!require(RSocrata)) devtools::install_github("Chicago/RSocrata")
-if(!require(fontawesome)) devtools::install_github("rstudio/fontawesome")
+#if(!require(fontawesome)) devtools::install_github("rstudio/fontawesome")
 if(!require(forcats)) install.packages("forcats", repos = "http://cran.us.r-project.org")
 if(!require(stringr)) install.packages("stringr", repos = "http://cran.us.r-project.org")
 if(!require(dplyr)) install.packages("dplyr", repos = "http://cran.us.r-project.org")
@@ -38,36 +38,31 @@ borough_vars <- c("SELECT A BOROUGH" = "",
 # background image address
 backgroundpic <- "https://images.theconversation.com/files/319995/original/file-20200311-116236-13j08cg.jpg?ixlib=rb-1.1.0&rect=63%2C229%2C5224%2C2608&q=45&auto=format&w=668&h=324&fit=crop" 
 
-
-
 #===============================================Shiny UI=========================================================
 ui <- fluidPage(
-  #tags$style("@import url(https://use.fontawesome.com/releases/v5.7.2/css/all.css);"),
-  #titlePanel("Home"),
   navbarPage(theme = shinytheme("sandstone"), collapsible = TRUE,
              title= "",
              id="nav",
-             windowTitle = "COVID-19 Homeless Manual 4 New Yorkers",
+             windowTitle = "The Department of Homeless Services during the Pandemic",
              header = tagList(
                useShinydashboard()
              ),
              # tab 1 (home page)
              tabPanel('Home',icon = icon("home"), 
                       fluidRow(
-                        tags$img(src = backgroundpic, class = "background", height="100%", width="100%", style = "opacity: 0.70"),
+                        tags$img(src = backgroundpic, class = "background", height=800, width="100%", style = "opacity: 0.70"),
                         absolutePanel(id = "foreground", class = "foreground-content",
-                                      top = "20%", left = "20%", right = "20%", width = "60%", fixed=FALSE,
+                                      top = "10%", left = "20%", right = "20%", width = "60%", fixed=FALSE,
                                       draggable = FALSE, height = 300,
-                                      fluidRow(style = "padding: 7.5%; background-color: white; text-align: center",
-                                               tags$h1("Welcome to the COVID-19 Survival Manual 4 New Yorkers app!", style="font-weight:bold"),tags$br(),
-                                               tags$p("The Coronavirus (Covid-19) has so far infected over 100 million people and caused over 2 million deaths globally. In the US, the City of New York has been hit hardest, which many people lost their jobs or went bankrupt due to the devastating blow for the economy, and had restricted access to clean foods and medication. In this project, our goal is to provide a survival guide to help and support the suffering New Yorkers. ", style="font-weight:italic"),tags$br(),
-                                               tags$h3("Remember, we are in this together!", style="color:#18bc9c; font-weight:bold"),
-                                               tags$h4("We would like to be your source for Coronavirus updates, resources, and trends in New York City.", style="color:#18bc9c")
-                                      ),
-                                      fluidRow(style = "padding: 7.5%; background-color: white; text-align: center",
-                                               tags$img(src = "meli.jpg",  width="100%",hight = '100%'),
-                                               imageOutput('image')
-                                      ),
+                                      
+                                      fluidRow(style = "padding: 7.5%; background-color: white",
+                                               tags$h1("Welcome to the ?? App!", style="font-weight:bold; text-align: center; color:#2e81ce"),tags$br(),
+                                               tags$p("The COVID-19 pandemic has produced a unique set of public health challenges. But the pandemic has exacerbated national crises that existed long before the coronavirus. Nowhere is this more evident than in the pandemic’s influence on homelessness and affordable housing. In our project we present data from the NYC Department of Homeless Services to analyze how the department was effected by the pandemic and whether or not the programs they put in place during this time were effective."
+                                                      ,style="font-size:medium"),
+                                               tags$img(src = "meli.jpg",  width="100%"),
+                                               imageOutput('image')),
+                                               tags$p("A polynomial regression is used to fit the data, we trained the model using only the pre-pandemic data and used the trained model to predict homelessness in the months after the pandemic hit. This model gives us an idea of what homelessness would look like if there were no pandemic. When we compared the post-pandemic predicted homelessness numbers to the actual homelessness numbers, we see that the predicted homelessness from the model are significantly lower than the real numbers. This re-enforces the idea that the homelessness crisis was exacerbated during the pandemic and the NYC Department of Homeless Services had to do something to mitigate this crisis. Whether or not these numbers would have been higher if the Department of Homeless Services hadn't initiated any extra programs is hard to say."
+                                                      , style="font-size:medium"),
                                       style = "opacity: 0.95")
                       )
              ),
@@ -76,7 +71,6 @@ ui <- fluidPage(
                       div(class='coverDiv',
                           titlePanel("Latest Data on Coronavirus (COVID-19) Cases in New York City"),
                           span(tags$h5("This page provides up-to-date Covid-19 statistics in NYC including case count, death count, probable count and hospitalized count, as well as a time-series trends plot for a synthetic view.")),
-                          
                           fluidRow(
                             # Value Boxes for most recent day
                             column(3, align="center",offset = 1,
@@ -102,10 +96,9 @@ ui <- fluidPage(
                             )
                           ),
                           span(tags$i(h5("Source: ", tags$a(href="https://data.cityofnewyork.us/Health/COVID-19-Daily-Counts-of-Cases-Hospitalizations-an/rc75-m7u3", "NYC Open Data. ")," Data are preliminary and subject to change.", style="font-weight:italic"))),
-                          span(tags$i(h6(paste0("Last Update on: ", nyc_latest$date_of_interest[1])))),
+                          span(tags$i(h5(paste0("Last Update on: ", nyc_latest$date_of_interest[1])))),tags$br(),
                           # plot to compare 5 boroughs
                           span(tags$h2("Covid-19 Overall Situation of the 5 Boroughs in NYC")),
-                          
                           fluidRow(
                             column(4, align="center",
                                    highchartOutput("tsnewcase",width = "100%",height = "400px")
@@ -116,9 +109,8 @@ ui <- fluidPage(
                             column(4, align="center",
                                    highchartOutput("tscum",width = "100%",height = "400px")
                             )
-                          ),
+                          ),tags$br(),
                           span(tags$h2("Covid-19 Detailed Situation  of the 5 Boroughs in NYC")),
-                          
                           sidebarLayout(position = "left",
                                         sidebarPanel(
                                           h3("NYC Neighborhoods", style="color:#068bd9"),
@@ -129,21 +121,26 @@ ui <- fluidPage(
                                                       selected = borough_vars[1]),
                                           # select from checkbox
                                           h3("Select time series", align = "left", style="color:#068bd9"),
-                                          checkboxInput("daily", label = "Daily", value = TRUE),
-                                          checkboxInput("weekly", label = "Weekly", value = FALSE),tags$br(),
+                                          div(checkboxInput("daily", label = "Daily", value = TRUE),
+                                              style="font-size: large"),
+                                          div(checkboxInput("weekly", label = "Weekly", value = FALSE),tags$br(),
+                                              style="font-size: large"),
                                           
                                           h3("Select the topic(s) to see trends over time", align = "left", style="color:#068bd9"),
-                                          checkboxInput("casesummary", label = "Cases", value = TRUE),
-                                          checkboxInput("deathsummary", label = "Deaths", value = FALSE),
-                                          checkboxInput("hospsummary", label = "Hospitalization", value = FALSE),tags$br(),
+                                          div(checkboxInput("casesummary", label = "Cases", value = TRUE),
+                                              style="font-size: large"),
+                                          div(checkboxInput("deathsummary", label = "Deaths", value = FALSE),
+                                              style="font-size: large"),
+                                          div(checkboxInput("hospsummary", label = "Hospitalization", value = FALSE),
+                                              style="font-size: large"),tags$br(),
                                           h4("Instructions for using the plot:", align = "left"),
-                                          h5("1. Select a NYC borough from the drop-down list;"),
-                                          h5("2. Select the time series;"),
-                                          h5("3. Select the topic(s) to plot trends;"),
-                                          h5("4. Note that at least one checkbox should be choosed for each section, otherwirse it will give you an error;"),
-                                          h5("5. Move the mouse over lines to see specific points;"),
-                                          h5("6. Click on the legends to hide or show lines;"),
-                                          h5("7. Click on the button in the top-right corner for more exporting options")
+                                          h4("1. Select a NYC borough from the drop-down list;"),
+                                          h4("2. Select the time series;"),
+                                          h4("3. Select the topic(s) to plot trends;"),
+                                          h4("4. Note that at least one checkbox should be choosed for each section, otherwirse it will give you an error;"),
+                                          h4("5. Move the mouse over lines to see specific points;"),
+                                          h4("6. Click on the legends to hide or show lines;"),
+                                          h4("7. Click on the button in the top-right corner for more exporting options")
                                         ),
                                         mainPanel(
                                           highchartOutput("ts1",width = "100%",height = "560px")
@@ -152,18 +149,7 @@ ui <- fluidPage(
                           )
                       )
              ),
-             # tab 3 (free meal interactive map)
-             tabPanel("NYC Free Meal", icon = icon("map-marker-alt"),
-                      leafletOutput("mymap", width="100%", height="100%"),
-                      titlePanel("NYC FreeMeal Point"),
-                      mainPanel(leafletOutput("map"))
-                      
-                          
-              
-                                        
-             ),
-                    
-             # tab 4 (shelter)  
+             # tab 3 (shelter)  
              tabPanel("Shelter", icon = icon("hotel"),
                      h2("The Shelter Data"),
                      DT::dataTableOutput("vaccine_table"),
@@ -171,26 +157,42 @@ ui <- fluidPage(
                      uiOutput("tab"),
                      uiOutput("vac")
              ),
-             # tab 5 (appendix)  
+             # tab 4 (free meal interactive map)
+             tabPanel("NYC Free Meal", icon = icon("map-marker-alt"),
+                      titlePanel("NYC Free Meal Point"),
+                      span(tags$h4(" One program that the Department of Homeless Services did start during the pandemic was to offer free meals to homeless people. Here, we made a map that shows where these free meals are available.")),
+                      leafletOutput("mymap", width="100%", height="100%"),
+                      mainPanel(leafletOutput("map"))
+                                            
+             ), 
+             # tab 5 (Conclusion)
+             tabPanel("Conclusion", icon = icon("pen-alt"),
+                      #add conclusion here
+                      
+                      
+                      
+                      
+             ), 
+             # tab 6 (appendix)  
              tabPanel("Appendix", icon = icon("info-circle"),
                       h2("Data Sources:"),
-                      tags$b("NYC COVID-19 Open Data: "), tags$a(href="https://data.cityofnewyork.us/Health/COVID-19-Daily-Counts-of-Cases-Hospitalizations-an/rc75-m7u3", "COVID-19 Daily Counts of Cases, Hospitalizations, and Deaths."),tags$br(),
-                      tags$b("Google COVID-19 Mobility Data: "), tags$a(href="https://www.google.com/covid19/mobility/", "Google's COVID-19 Community Mobility Reports."),tags$br(),
-                      tags$b("Shiny Dashboard: "), tags$a(href="https://github.com/TZstatsADS/Spring2021-Project2-group5", "4New Yorkers Covid Survival Manual's Github repository."),
+                      span("Directory of Homebase Locations: ", style="font-size: large",tags$a(href="https://data.cityofnewyork.us/Social-Services/Directory-Of-Homebase-Locations/ntcm-2w4k", "Locations of Homebase (Homeless Prevention Network) offices.",style="font-size: large")),tags$br(),
+                      span("NYC COVID-19 Open Data: ", style="font-size: large",tags$a(href="https://data.cityofnewyork.us/Health/COVID-19-Daily-Counts-of-Cases-Hospitalizations-an/rc75-m7u3", "COVID-19 Daily Counts of Cases, Hospitalizations, and Deaths.",style="font-size: large")),tags$br(),
+                      span("Buildings by Borough and Community District: ", style="font-size: large",tags$a(href="https://data.cityofnewyork.us/Social-Services/Buildings-by-Borough-and-Community-District/3qem-6v3v", "Shelter Buildings by Borough and Community District.",style="font-size: large")),tags$br(),
+                      span("DHS Data Dashboard: ",style="font-size: large"), tags$a(href="https://data.cityofnewyork.us/Social-Services/DHS-Data-Dashboard/5e9h-x6ak", "DHS Shelter Data.",style="font-size: large"),tags$br(),
+                      span("COVID-19 Free Meals Locations: ", style="font-size: large",tags$a(href="https://data.cityofnewyork.us/Education/COVID-19-Free-Meals-Locations/sp4a-vevi", "COVID-19 Free Meals Locations in NYC.",style="font-size: large")),tags$br(),
+                      span("Shiny Dashboard: ",style="font-size: large"), tags$a(href="https://github.com/TZstatsADS/Spring2021-Project2-group5", "4New Yorkers Covid Survival Manual's Github repository.",style="font-size: large"),
                       tags$br(),tags$br(),tags$h2("Contacts:"),
-                      tags$a(href="mailto:mb4786@columbia.edu", "Mellisa Bischoff"), ", Columbia University",tags$br(),
-                      tags$a(href="mailto:xc2578@columbia.edu", "Xueying Chen"),", Columbia University",tags$br(),
-                      tags$a(href="mailto:jl5886@columbia.edu", "Jing Lu"),", Columbia University",tags$br(),
-                      tags$a(href="mailto:yw3727@columbia.edu", "Yalin Wang"),", Columbia University",tags$br(),
-                      tags$a(href="mailto:yw3598@columbia.edu", "Yarong Wang"),", Columbia University",tags$br(),
+                      span(tags$a(href="mailto:mb4786@columbia.edu", "Mellisa Bischoff",style="font-size: large"), ", Columbia University",style="font-size: large"),tags$br(),
+                      span(tags$a(href="mailto:xc2578@columbia.edu", "Xueying Chen",style="font-size: large"),", Columbia University",style="font-size: large"),tags$br(),
+                      span(tags$a(href="mailto:jl5886@columbia.edu", "Jing Lu",style="font-size: large"),", Columbia University",style="font-size: large"),tags$br(),
+                      span(tags$a(href="mailto:yw3727@columbia.edu", "Yalin Wang",style="font-size: large"),", Columbia University",style="font-size: large"),tags$br(),
+                      span(tags$a(href="mailto:yw3598@columbia.edu", "Yarong Wang",style="font-size: large"),", Columbia University",style="font-size: large"),tags$br(),
                       tags$br(),tags$br(),tags$h2("Github Page:"),
-                      tags$a(href="https://github.com/TZstatsADS/Fall2021-Project2-group5", "See code in our Github repository"),tags$br(),tags$br())
+                      tags$a(href="https://github.com/TZstatsADS/Fall2021-Project2-group5", "See code in our Github repository",style="font-size: large"),tags$br(),tags$br())
              )
  )
    
-
-
-
 
           
 server <- function(input, output, session) {
@@ -410,6 +412,7 @@ server <- function(input, output, session) {
         hc_exporting(enabled = TRUE)
     })
   })
+  #free meal
   color <- colorFactor(c("red","yellow","green","blue","black"),freemeal$City)
   output$map <- renderLeaflet({
     map <- leaflet(freemeal) %>%
@@ -419,8 +422,7 @@ server <- function(input, output, session) {
       addCircleMarkers(
         lng=~Longitude,
         lat=~Latitude,
-        color =~color(freemeal$City),
-        
+        color =~color(freemeal$City)
       ) %>%
       addLegend(
         "bottomleft", # Legend position
@@ -432,21 +434,14 @@ server <- function(input, output, session) {
       
     
     
-    
-    
-    
-    
   })
-  
-  output$vaccine_table = DT::renderDataTable({
-    shelters[3:6]})
-  
+  #shelter
+  output$vaccine_table = DT::renderDataTable({shelters[3:6]})
   url1 <- a("shelters", href="https://data.cityofnewyork.us/Social-Services/Individual-Census-by-Borough-Community-District-an/veav-vj3r")
   output$tab <- renderUI({
     tagList("URL link :", url1)
-    
-    
-    
+   
+      
   })
 }
   
